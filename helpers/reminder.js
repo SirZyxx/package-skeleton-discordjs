@@ -1,13 +1,34 @@
-let reminders = [];
+const fs = require('fs');
+const path = './helpers/reminders.json';
+
+// Load existing reminders from the JSON file
+function loadReminders() {
+    if (fs.existsSync(path)) {
+        const data = fs.readFileSync(path, 'utf8');
+        return JSON.parse(data);
+    }
+    return [];
+}
+
+// Save reminders to the JSON file
+function saveReminders(reminders) {
+    fs.writeFileSync(path, JSON.stringify(reminders, null, 4));
+}
 
 module.exports = {
     addReminder: function(reminder) {
+        const reminders = loadReminders();
         reminders.push(reminder);
+        saveReminders(reminders);
+        console.log('Added reminder!');
     },
-    checkReminders: function(client) {
+    checkReminders: function() {
         const now = Date.now();
+        let reminders = loadReminders();
         reminders = reminders.filter(reminder => {
-            if (reminder.respawnTime - now <= 5 * 60 * 1000) { // Check if 5 minutes away
+            const respawnFormula = reminder.respawnTime - now <= 5 * 60 * 1000;
+            console.log(`reminder: ${respawnFormula}`);
+            if (respawnFormula) { // Check if 5 minutes away
                 const embed = new EmbedBuilder()
                     .setColor(0xFF0000)
                     .setTitle('Resource Island Respawning Soon!')
@@ -23,5 +44,6 @@ module.exports = {
             }
             return true; // Keep it in the list
         });
+        saveReminders(reminders);
     }
 };

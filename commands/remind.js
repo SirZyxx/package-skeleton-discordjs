@@ -36,7 +36,7 @@ module.exports = {
         const coordinates = interaction.options.getString('coordinates');
 
         // Calculate respawn time
-        const offsetHours = size === 'large' ? 72 : 32;
+        const offsetHours = size === 'large' ? 1 : 32;
         const currentTime = new Date();
         const respawnTime = currentTime.getTime() + (offsetHours + hours) * 3600000 + minutes * 60000;
 
@@ -55,6 +55,6 @@ module.exports = {
             .setTimestamp();
 
         // Respond to the command with an embed
-        await interaction.reply({ ephemeral: true, embeds: [embed] });
+        await interaction.reply({ ephemeral: false, embeds: [embed] });
     }
 };
