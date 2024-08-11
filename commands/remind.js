@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { EmbedBuilder } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const reminders = require('../helpers/reminder.js');
-console.error(require('discord.js').version)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -11,10 +10,8 @@ module.exports = {
             option.setName('size')
                 .setDescription('Size of the island (small/large)')
                 .setRequired(true)
-                .addChoices([
-                    { name: 'Small', value: 'small' },
-                    { name: 'Large', value: 'large' }
-                ])
+                .addChoice('Large', 'large')
+                .addChoice('Small', 'small')
         )
         .addIntegerOption(option =>
             option.setName('hours')
@@ -47,7 +44,7 @@ module.exports = {
         reminders.addReminder({ respawnTime, coordinates, user: interaction.user });
 
         // Create an embed for the response
-        const embed = new EmbedBuilder()
+        const embed = new MessageEmbed()
             .setColor(0x00AE86)
             .setTitle('Resource Island Reminder Set')
             .setDescription(`You have set a reminder for the island at ${coordinates}.`)

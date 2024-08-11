@@ -31,10 +31,10 @@ manager.on('shardCreate', shard => {
             data: { shardId: shard.id + 1 }
         }).catch(console.error);
 
-        // Periodically check reminders
-        setInterval(() => {
-            reminders.checkReminders(client);
-        }, 60000);
+        // // Periodically check reminders
+        // setInterval(() => {
+        //     reminders.checkReminders(client);
+        // }, 60000);
     })
 });
 
