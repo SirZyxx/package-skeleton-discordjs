@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const { Client, Collection, Intents } = require('discord.js');
 const fs = require('fs');
+const reminders = require('./helpers/reminder.js');
 const client = new Client({
     intents: [Intents.FLAGS.GUILDS]
 });
@@ -37,3 +38,11 @@ process.on('message', message => {
 });
 
 client.login(process.env.DISCORD_AUTH_TOKEN).catch(console.error);
+
+client.once('ready', () => {
+    // Periodically check reminders
+    setInterval(() => {
+        console.log('ran Reminders')
+        reminders.checkReminders(client);
+    }, 5000);
+});
