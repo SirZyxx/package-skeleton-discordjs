@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const { ShardingManager } = require('discord.js');
+const reminders = require('./helpers/reminders');
 
 // Copying .env.example to .env if it doesn't exist.
 if (!fs.existsSync('./.env')) {
@@ -27,8 +28,13 @@ manager.on('shardCreate', shard => {
     shard.on('ready', () => {
         shard.send({
             type: 'shardId',
-            data: {shardId: shard.id + 1}
+            data: { shardId: shard.id + 1 }
         }).catch(console.error);
+
+        // Periodically check reminders
+        setInterval(() => {
+            reminders.checkReminders(client);
+        }, 60000);
     })
 });
 
