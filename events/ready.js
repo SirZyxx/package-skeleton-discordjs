@@ -31,7 +31,7 @@ module.exports = {
             client.user.setPresence({
                 activities: [
                     {
-                        name: `Playing GGE`,
+                        name: `Good Game Empire`,
                         type: 'PLAYING'
                     }
                 ],

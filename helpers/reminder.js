@@ -51,7 +51,7 @@ module.exports = {
             const respawnTime = reminder.respawnTime;
             const respawnFormula = respawnTime - now <= 5 * 60 * 1000;
 
-            console.log(`Checking reminder: ${new Date(respawnTime).toLocaleString()}`);
+            // console.log(`Checking reminder: ${new Date(respawnTime).toLocaleString()}`);
             if (respawnFormula) { // Check if 5 minutes away
                 const embed = new MessageEmbed()
                     .setColor(0xFF0000)
