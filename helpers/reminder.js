@@ -13,25 +13,45 @@ function loadReminders() {
 
 // Save reminders to the JSON file
 function saveReminders(reminders) {
-    console.log(reminders);
     fs.writeFileSync(path, JSON.stringify(reminders, null, 4));
 }
 
 module.exports = {
-    addReminder: function (reminder) {
+    addReminder: function (timeLeftUntilDespawn, respawnDurationHours, coordinates, user) {
+        const now = Date.now();
+
+        // Convert the time left and respawn duration into milliseconds
+        const timeLeftMs = timeLeftUntilDespawn.hours * 60 * 60 * 1000 + timeLeftUntilDespawn.minutes * 60 * 1000;
+        const respawnDurationMs = respawnDurationHours * 60 * 60 * 1000;
+
+        // Calculate the exact time when the island will respawn in UNIX format
+        const respawnTime = now + timeLeftMs + respawnDurationMs;
+
+        const reminder = {
+            respawnTime,
+            coordinates,
+            user: {
+                id: user.id, // Store user ID for later use
+            }
+        };
+
         const reminders = loadReminders();
         reminders.push(reminder);
         saveReminders(reminders);
-        console.log('Added reminder!');
+
+        console.log(`Added reminder! Will remind at: ${new Date(respawnTime).toLocaleString()}`);
     },
+
     checkReminders: async function (client) {
         const now = Date.now();
         let reminders = loadReminders();
-        reminders = reminders.filter(async reminder => {
-            let respawnFormula = reminder.respawnTime - now <= 5 * 60 * 1000;
-            let reminderIndex = reminders.indexOf(reminder);
 
-            console.log(`reminder: ${respawnFormula}`);
+        for (let i = reminders.length - 1; i >= 0; i--) { // Iterate backward to safely remove items
+            const reminder = reminders[i];
+            const respawnTime = reminder.respawnTime;
+            const respawnFormula = respawnTime - now <= 5 * 60 * 1000;
+
+            console.log(`Checking reminder: ${new Date(respawnTime).toLocaleString()}`);
             if (respawnFormula) { // Check if 5 minutes away
                 const embed = new MessageEmbed()
                     .setColor(0xFF0000)
@@ -44,13 +64,13 @@ module.exports = {
                     .setTimestamp();
 
                 let dmChannel = await client.users.createDM(reminder.user.id);
-                dmChannel.send({ embeds: [embed] });
-                
-                // reminders.splice(reminderIndex, 1);
-                return false; // Remove the reminder from the list
+                await dmChannel.send({ embeds: [embed] });
+
+                // Remove the reminder from the list
+                reminders.splice(i, 1);
             }
-            return true; // Keep it in the list
-        });
+        }
+
         saveReminders(reminders);
     }
 };

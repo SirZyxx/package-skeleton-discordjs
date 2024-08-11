@@ -31,18 +31,20 @@ module.exports = {
 
     async execute(interaction) {
         const size = interaction.options.getString('size');
-        const hours = interaction.options.getInteger('hours');
+        const hours = interaction.options.getInteger('hours') - 1;
         const minutes = interaction.options.getInteger('minutes');
         const coordinates = interaction.options.getString('coordinates');
-
-        // Calculate respawn time
-        const offsetHours = size === 'large' ? 1 : 32;
-        const currentTime = new Date();
-        const respawnTime = currentTime.getTime() + (offsetHours + hours) * 3600000 + minutes * 60000;
-
-        // Store reminder
-        reminders.addReminder({ respawnTime, coordinates, user: interaction.user });
-
+    
+        // Determine the respawn duration based on island size
+        const respawnDurationHours = size === 'large' ? 72 : 36;
+    
+        // Calculate the actual respawn time in UNIX format
+        const currentTime = new Date().getTime();
+        const respawnTime = currentTime + (respawnDurationHours + hours) * 3600000 + minutes * 60000;
+    
+        // Store the reminder
+        reminders.addReminder({ hours, minutes }, respawnDurationHours, coordinates, interaction.user);
+    
         // Create an embed for the response
         const embed = new MessageEmbed()
             .setColor(0x00AE86)
@@ -53,7 +55,7 @@ module.exports = {
                 { name: 'Respawn Time', value: `<t:${Math.floor(respawnTime / 1000)}:F>`, inline: true }
             )
             .setTimestamp();
-
+    
         // Respond to the command with an embed
         await interaction.reply({ ephemeral: false, embeds: [embed] });
     }
