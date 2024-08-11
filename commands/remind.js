@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 const reminders = require('../helpers/reminder.js');
+console.error(require('discord.js').version)
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +11,10 @@ module.exports = {
             option.setName('size')
                 .setDescription('Size of the island (small/large)')
                 .setRequired(true)
-                .addChoices([{ name: 'Small', value: 'small' }, { name: 'Large', value: 'large' }])
+                .addChoices([
+                    { name: 'Small', value: 'small' },
+                    { name: 'Large', value: 'large' }
+                ])
         )
         .addIntegerOption(option =>
             option.setName('hours')
