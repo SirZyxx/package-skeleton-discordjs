@@ -31,7 +31,7 @@ module.exports = {
             client.user.setPresence({
                 activities: [
                     {
-                        name: `on Shard ${client.shardId} - https://github.com/JakyeRU/package-skeleton-discordjs`,
+                        name: `Playing GGE`,
                         type: 'PLAYING'
                     }
                 ],
