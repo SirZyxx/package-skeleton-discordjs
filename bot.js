@@ -39,12 +39,6 @@ process.on('message', message => {
 
 client.login(process.env.DISCORD_AUTH_TOKEN).catch(console.error);
 
-client.on("message", message => {
-    if (message.channel.id == '1272279700617822321'){
-        
-    }
-});
-
 client.once('ready', () => {
     // Periodically check reminders
     setInterval(() => {
